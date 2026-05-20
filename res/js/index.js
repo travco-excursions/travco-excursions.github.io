@@ -54,18 +54,20 @@ pics: "res/pics/",
 
 
 
-const app = createApp({
-  
-mounted() {
-if ('serviceWorker' in navigator) {navigator.serviceWorker.register('/sw.js')};
-},
-
-
-})
+const app = createApp()
 app.config.globalProperties.$store =  store;
 app.use(router)
 app.mount('#app')
 
 
+
+// Register service worker after the app safely mounts and loads
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => console.log('SW registered:', registration.scope))
+      .catch(error => console.error('SW registration failed:', error));
+  });
+}
 
 

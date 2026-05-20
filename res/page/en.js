@@ -220,7 +220,10 @@ device() {
 methods: {
 
     
-async share() { await navigator.share({ title: "Travco Excursions", url: window.location.href }) },
+async share() {
+  try { await navigator.share({title: "Travco Excursions",  url: window.location.href }) } 
+  catch (error) { console.log("Share window dismissed:", error.message)}
+},
 
 
 
