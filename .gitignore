@@ -2,7 +2,7 @@
 secret_config.json
 
 # Ignore an entire folder (always end with a slash)
-
+ignore/
 
 # Ignore all files with a specific extension
 *.log
