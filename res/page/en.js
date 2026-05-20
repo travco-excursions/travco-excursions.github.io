@@ -204,39 +204,25 @@ computed: {
 
     // Return everything as a single reactive object
     return { display, type, os, browser };
-  }
+  },
+  
+ 
+shareSupport(){
+   if (navigator.share) {return true } else {return false}
+},
+  
+  
 },
 
 
 methods: {
 
-
-async copy(text) {
-      try { await navigator.clipboard.writeText(text);
-      ui("#copy", 999); }
-      catch (error) { console.warn("Copy failed:", error) }
-},
     
-    
-async sshare(name, text) {
-        if (!navigator.share) { ui("#share"); return; };
-        try { await navigator.share({ title: name, url: text }) }
-        catch (error) { console.warn("Share canceled:", error) }
-},
-
-
-
 async share(name, text) {
-  if (!navigator.share) {
-    ui("#share");
-    return;
-  }
-  try {
-    await navigator.share({ title: name, url: text });
-  } catch (error) {
-    console.warn("Share canceled:", error);
-  }
+         await navigator.share({ title: name, url: text }) 
 },
+
+
 
 
 
@@ -283,7 +269,7 @@ template: `
       <button class="border round  transparent"> <i>more_vert</i></button>
       <menu class="left no-wrap">
       
-        <li v-if="device.type === 'mobile'" @click="share('tours', window.location.origin + $route.fullPath)"><i>share</i><span>share</span></li>
+        <li v-if="device.type !== 'mobile' && shareSupport" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
       </menu>
     </div>
@@ -291,9 +277,17 @@ template: `
     </nav>
 </header>
 
+
+
+
+
 <main class="responsive">
 <RouterView />
 </main>
+
+
+
+
 
 <div class="overlay blur"></div>
 <dialog class="left" id="menu_left" data-ui="#menu_left">
@@ -327,7 +321,7 @@ template: `
 <RouterLink activeClass="active" to="/en/tours"><i>home</i><span>Home</span></RouterLink>
 <a data-ui="#menu_left"><i>sailing</i><span>Tours</span></a>
 <RouterLink activeClass="active" to="/en/contact"><i>call</i><span>Contact</span></RouterLink>
-<a v-if="device.type === 'mobile'" @click="share('tours', window.location.origin + $route.fullPath)"><i>share</i><span>share</span></a>
+<a v-if="shareSupport" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></a>
 </nav>
 
 
