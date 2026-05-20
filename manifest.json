@@ -1,0 +1,13 @@
+{
+"name": "EveryLink", 
+"short_name": "EveryLink",
+"start_url": "/?utm=pwa",
+"display": "standalone",
+"background_color": "#fffbff",
+"theme_color": "#5f52a7",
+
+"icons": [
+{"src": "/res/pics/icon-192x192.png","type": "image/png", "sizes": "192x192"},
+{"src": "/res/pics/icon-512x512.png","type": "image/png", "sizes": "512x512"}
+]
+}
