@@ -37,7 +37,7 @@ template: `
 
 <div v-show="$route.path !== '/en/search/'" class="small-padding">
 <nav class="scroll">
-<RouterLink to="/en/tours/" activeClass="active primary"  class="button chip">All</RouterLink>
+<RouterLink to="/en/tours" activeClass="active primary"  class="button chip">All</RouterLink>
 <RouterLink :to="'/en/tag/' + tag" activeClass="primary medium"  class="button chip"  v-for="tag in $store.tags" :key="tag"><span v-text="tag"></span></RouterLink>
 </nav>
 </div>

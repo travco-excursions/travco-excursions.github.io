@@ -273,18 +273,18 @@ template: `
 
 <header class="fixed elevate fill">
   <nav>
-    <RouterLink v-show="device.display === 'large'" class="button border round transparent" to="/en/"><i>home</i></RouterLink>
+    <RouterLink v-show="device.display === 'large'" class="button border round transparent" to="/en/tours"><i>home</i></RouterLink>
     <button v-show="device.display !== 'large'" data-ui="#menu_left" class="border round  transparent"> <i>menu</i></button>
     <h1 class="h5 max center-align bold">Travco Excursions</h1>
-    <RouterLink v-show="device.display === 'large'" class="button border round transparent" to="/en/contact/"><i>call</i></RouterLink>
-    <RouterLink v-show="$route.path !== '/en/tours/' && $route.path !== '/en/search/'" class="button border round transparent" to="/en/search/"><i>search</i></RouterLink>
+    <RouterLink v-show="device.display === 'large'" class="button border round transparent" to="/en/contact"><i>call</i></RouterLink>
+    <RouterLink v-show="$route.path !== '/en/tours' && $route.path !== '/en/search'" class="button border round transparent" to="/en/search"><i>search</i></RouterLink>
 
     <div>
       <button class="border round  transparent"> <i>more_vert</i></button>
       <menu class="left no-wrap">
       
         <li v-if="device.type === 'mobile'" @click="share('tours', window.location.origin + $route.fullPath)"><i>share</i><span>share</span></li>
-        <li><RouterLink to="/en/about/"><i>info</i><span>About Us</span></RouterLink></li>
+        <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
       </menu>
     </div>
 
@@ -299,7 +299,7 @@ template: `
 <dialog class="left" id="menu_left" data-ui="#menu_left">
 <ul class="list border">
 
-<li><RouterLink activeClass="link" to="/en/tours/">
+<li><RouterLink activeClass="link" to="/en/tours">
   <i>tag</i> <div class="max">All</div><b v-text="'('+ $store.tours.length +')'"></b>
 </RouterLink></li>  
 
@@ -313,7 +313,7 @@ template: `
 
 <nav v-show="device.display === 'large'" class="scroll left max elevate">
 
-<RouterLink activeClass="active" to="/en/tours/">
+<RouterLink activeClass="active" to="/en/tours">
 <i>tag</i><span class="max">All</span> <b v-text="'('+ $store.tours.length +')'"></b>
 </RouterLink>
 
@@ -324,9 +324,9 @@ template: `
 
 
 <nav v-show="device.display !== 'large'" class="bottom top-round">
-<RouterLink activeClass="active" to="/en/tours/"><i>home</i><span>Home</span></RouterLink>
+<RouterLink activeClass="active" to="/en/tours"><i>home</i><span>Home</span></RouterLink>
 <a data-ui="#menu_left"><i>sailing</i><span>Tours</span></a>
-<RouterLink activeClass="active" to="/en/contact/"><i>call</i><span>Contact</span></RouterLink>
+<RouterLink activeClass="active" to="/en/contact"><i>call</i><span>Contact</span></RouterLink>
 <a v-if="device.type === 'mobile'" @click="share('tours', window.location.origin + $route.fullPath)"><i>share</i><span>share</span></a>
 </nav>
 
