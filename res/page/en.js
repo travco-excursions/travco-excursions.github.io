@@ -214,18 +214,13 @@ device() {
 
   
 
-  
-  
 },
 
 
 methods: {
 
     
-async share(name, text) { await navigator.share({ title: name, url: text }) },
-
-
-
+async share() { await navigator.share({ title: "Travco Excursions", url: window.location.href }) },
 
 
 
@@ -268,7 +263,7 @@ template: `
       <button class="border round  transparent"> <i>more_vert</i></button>
       <menu class="left no-wrap">
       
-        <li v-if="device.type !== 'mobile' && $store.device.share" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></li>
+        <li v-if="device.type !== 'mobile' && $store.device.share" @click="share()"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
       </menu>
     </div>
@@ -320,7 +315,11 @@ template: `
 <RouterLink activeClass="active" to="/en/tours"><i>home</i><span>Home</span></RouterLink>
 <a data-ui="#menu_left"><i>sailing</i><span>Tours</span></a>
 <RouterLink activeClass="active" to="/en/contact"><i>call</i><span>Contact</span></RouterLink>
-<a v-if="$store.device.share" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></a>
+<a v-if="$store.device.share" @click="share()"><i>share</i><span>share</span></a>
+
+
+
+
 </nav>
 
 
