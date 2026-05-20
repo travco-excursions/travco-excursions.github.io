@@ -1,13 +1,18 @@
 {
-"name": "Travco Excursions", 
-"short_name": "Travco Excursions",
-"start_url": "/#/",
-"display": "standalone",
-"background_color": "#fffbff",
-"theme_color": "#fffbff",
-
-"icons": [
-{"src": "/res/pics/travco/logo.png","type": "image/png", "sizes": "192x192"},
-{"src": "/res/pics/travco/logo.png","type": "image/png", "sizes": "512x512"}
-]
+  "name": "Travco Excursions",
+  "short_name": "Travco Excursions",
+  "start_url": "/#/",
+  "display": "standalone",
+  "background_color": "#fffbff",
+  "theme_color": "#bc004b",
+  "icons": [
+    {"src": "/res/pics/travco/logo-192x192.png", "type": "image/png", "sizes": "192x192"},
+    {"src": "/res/pics/travco/logo-512x512.png", "type": "image/png", "sizes": "512x512"}
+  ],
+  "description": "Travco Excursions In Sharm elShiek",
+  "dir": "ltr",
+  "lang": "en",
+  "orientation": "portrait",
+  "prefer_related_applications": false,
+  "categories": [ "travel"]
 }
