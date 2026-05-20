@@ -1,27 +1,13 @@
 export default {
-  data() {
-    return {
+  data() {return {
       // Stores the secure browser install token
       deferredPrompt: null
-    };
-  },
+  }},
   
-  mounted() {
-    
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
-
-    
-    
-    
-    // Automatically capture the install token when the browser allows it
-    window.addEventListener('beforeinstallprompt', this.captureInstallToken);
-  },
   
-  beforeUnmount() {
-    window.removeEventListener('beforeinstallprompt', this.captureInstallToken);
-  },
   
-  methods: {
+  
+ methods: {
     // 1. Saves the token so the button method can use it
     captureInstallToken(e) {
       e.preventDefault();
@@ -47,10 +33,29 @@ export default {
       this.deferredPrompt = null;
     }
   },
+
+  
+  
+  
+  mounted() {
+  
+    // Automatically capture the install token when the browser allows it
+    window.addEventListener('beforeinstallprompt', this.captureInstallToken);
+  },
+  
+  beforeUnmount() {
+    window.removeEventListener('beforeinstallprompt', this.captureInstallToken);
+  },
+  
   
   template: `
-    <button @click="installApp" class="install-btn">
-      Install App
-    </button>
+  
+  
+  
+    <button @click="installApp">Install App</button>
+    
+    
+    
+    
   `
 };

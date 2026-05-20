@@ -240,7 +240,6 @@ this.$store.tags = [...new Set(this.tours.flatMap(tour => tour.tags || []))];
 
 mounted() {
 
- if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
 
 },
 
