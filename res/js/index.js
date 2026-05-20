@@ -10,8 +10,7 @@ const router = createRouter({
 history: createWebHashHistory(), 
 scrollBehavior(to, from) { return {top: 0}  },
 routes: [
-// { path: '/', redirect: '/en/tours' },
-{path: '/', component: () => import('../page/home.js')},
+{ path: '/', redirect: '/en/tours' },
 
 
   {path: '/en', component: () => import('../page/en.js'), redirect: '/en/tours' ,children: [
@@ -22,11 +21,11 @@ routes: [
     {path: 'search', component: () => import('../page/en/tours.js')},
     {path: 'contact', component: () => import('../page/en/contact.js')},
     {path: 'about', component: () => import('../page/en/about.js')},
-    {path: ':pathMatch(.*)*', component: () => import('../page/en/404.js')},
+    {path: ':pathMatch(.*)*', redirect: '/en'},
   ]},
 
 
-{path: '/:pathMatch(.*)*', component: () => import('../page/404.js')},
+{path: '/:pathMatch(.*)*', redirect: '/'},
 ],
 
 });//router
@@ -52,8 +51,9 @@ pics: "res/pics/",
 })//store
 
 
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
+//if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
 
+if('serviceWorker'in navigator)window.addEventListener('load',async()=>{try{const r=await navigator.serviceWorker.register('/sw.js');r.addEventListener('updatefound',()=>{const w=r.installing;w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)w.postMessage('skipWaiting')})})}catch(e){console.error(e)}});
 
 
 const app = createApp()
