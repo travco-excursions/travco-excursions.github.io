@@ -13,8 +13,8 @@ components: {
   </div>
   <nav>
     <a v-if="phone" class="button border" :href="'tel:' + phone"><i>call</i></a>
-    <a v-if="whatsapp" class="button border" :href="'whatsapp://send?phone=' + whatsapp"><i><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i></a>
-    <a v-if="mail" class="button border" :href="'mailto://' + mail"><i>mail</i></a>
+    <a v-if="whatsapp" class="button border" :href="($store.device.type === 'mobile' ? 'whatsapp://send?phone=' : 'https://wa.me/?phone=') + whatsapp"><i><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i></a>
+    <a v-if="mail" class="button border" :href="'mailto:' + mail"><i>mail</i></a>
   </nav>
 </article>
 `},
@@ -25,9 +25,9 @@ template: `
 <h2>contact Us</h2>
 
  <nav class="">   
- <a class="button border" :href="'tel:' + $store.WAnumber"><i>phone</i></a>
- <a class="button border" :href="'whatsapp://send?phone=' + $store.WAnumber"><i><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i></a>
- <a class="button border" href=""><i>mail</i><span>Email</span></a>
+ <a class="button border" :href="'tel:' + $store.number"><i>phone</i></a>
+ <a class="button border" :href="($store.device.type === 'mobile' ? 'whatsapp://send?phone=' : 'https://wa.me/?phone=') + $store.whatsapp"><i><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i></a>
+ <a class="button border" :href="'mailto:' + $store.mail"><i>mail</i><span>Email</span></a>
 </nav>
 
 <br />

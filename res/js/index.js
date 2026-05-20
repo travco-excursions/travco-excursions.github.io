@@ -35,8 +35,9 @@ device: {},
 
 title: "Travco Tours",
 
+number: +201550579981,
+whatsapp: +201550579981,
 mail: "ibrahimyounan1997@gmail.com",
-WAnumber: 201550579981,
 
 pics: "res/pics/",
 

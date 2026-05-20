@@ -32,8 +32,8 @@ Notes:  ${this.booking.note}`)
 
 
 whatsapp() { 
-  if (this.$store.device.type === 'mobile') { return "whatsapp://send?phone=" + this.$store.WAnumber + "&text=" + this.message} 
-  else { return "https://wa.me/?phone=" + this.$store.WAnumber + "&text=" + this.message}
+  if (this.$store.device.type === 'mobile') { return "whatsapp://send?phone=" + this.$store.WAnumber + "&text=" + this.message}
+  else { return "https://wa.me/?phone=" + this.$store.whatsapp + "&text=" + this.message}
 },
 
 mail() { return "mailto:" + this.$store.mail + "?subject=website%20booking&body=" + this.message},
