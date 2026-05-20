@@ -51,11 +51,17 @@ pics: "res/pics/",
 })//store
 
 
-if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
 
 
 
-const app = createApp()
+const app = createApp({
+  
+mounted() {
+if ('serviceWorker' in navigator) {navigator.serviceWorker.register('/sw.js')};
+},
+
+
+})
 app.config.globalProperties.$store =  store;
 app.use(router)
 app.mount('#app')
