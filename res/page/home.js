@@ -1,77 +1,56 @@
 export default {
+  data() {
+    return {
+      // Stores the secure browser install token
+      deferredPrompt: null
+    };
+  },
   
-  
-data() { return {
-  deferredPrompt: null,
-  canInstall: false
- }},
-
-
- methods: {
-    // Helper method to detect if the user is currently browsing inside the PWA
-    isAlreadyInstalled() {
-      return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    },
+  mounted() {
     
-    handleBeforeInstallPrompt(e) {
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
+
+    
+    
+    
+    // Automatically capture the install token when the browser allows it
+    window.addEventListener('beforeinstallprompt', this.captureInstallToken);
+  },
+  
+  beforeUnmount() {
+    window.removeEventListener('beforeinstallprompt', this.captureInstallToken);
+  },
+  
+  methods: {
+    // 1. Saves the token so the button method can use it
+    captureInstallToken(e) {
       e.preventDefault();
       this.deferredPrompt = e;
-      this.canInstall = true; // Shows the button when installable
     },
     
-    async installPWA() {
-      if (!this.deferredPrompt) return;
+    // 2. The click method to prompt installation
+    async installApp() {
+      // If the browser hasn't fired the event yet, this will do nothing
+      if (!this.deferredPrompt) {
+        console.warn("The browser is not ready to install this app yet.");
+        return;
+      }
       
+      // Trigger the native browser install dialog box
       this.deferredPrompt.prompt();
-      const { outcome } = await this.deferredPrompt.userChoice;
-      console.log(`PWA install choice: ${outcome}`);
       
+      // Handle the user's action
+      const { outcome } = await this.deferredPrompt.userChoice;
+      console.log(`User installation choice: ${outcome}`);
+      
+      // Clear token after use (it can only be used once)
       this.deferredPrompt = null;
-      // Hide button immediately after prompt action (regardless of accept/dismiss)
-      this.canInstall = false;
-    },
-    
-    handleAppInstalled() {
-      console.log('PWA installed successfully by user.');
-      // Final absolute guarantee to hide the button on success
-      this.canInstall = false;
     }
   },
-
   
-mounted() {
-  
-  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
-
-
-    // 1. Check if the app is already running as an installed standalone PWA
-    if (this.isAlreadyInstalled()) { this.canInstall = false; return; }
-    
-    // 2. Listen for the browser installation readiness
-    window.addEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    
-    // 3. Listen for the exact moment the user finishes installing the app
-    window.addEventListener('appinstalled', this.handleAppInstalled);
-  },
-  
-beforeUnmount() {
-    window.removeEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    window.removeEventListener('appinstalled', this.handleAppInstalled);
-  },
-  
-
-  
-
-template: `
-
-
-
-
-<button  v-if="canInstall"  @click="installPWA" class=""> Install App </button>
-
-
-
-`//template
+  template: `
+    <button @click="installApp" class="install-btn">
+      Install App
+    </button>
+  `
 };
-
-
