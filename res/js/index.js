@@ -31,7 +31,7 @@ routes: [
 
 const store = reactive({
 
-device: {type:"", display:"", os:"", browser:""}, 
+device: {}, 
 
 title: "Travco Tours",
 

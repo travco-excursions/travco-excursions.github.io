@@ -169,47 +169,51 @@ tours: [
 
 computed: {
   
-  device() {
-    const ua = navigator.userAgent;
-    const width = window.innerWidth;
-    const screenWidth = window.screen.width;
+device() {
+  const ua = navigator.userAgent;
+  const width = window.innerWidth;
+  const screenWidth = window.screen.width;
 
-    // 1. Determine Display Size
-    let display = "medium";
-    if (width < 601) display = "small";
-    else if (width >= 993) display = "large"; // Fixed edge-case gap at 993px
+  // 1. Determine Display Size
+  let display = "medium";
+  if (width < 601) display = "small";
+  else if (width >= 993) display = "large";
 
-    // 2. Determine OS
-    let os = "unknown";
-    if (/Android/i.test(ua)) os = "android";
-    else if (/iPhone|iPad|iPod/i.test(ua)) os = "ios";
-    else if (/Harmony|HUAWEI/i.test(ua)) os = "harmony";
-    else if (/Windows NT/i.test(ua)) os = "windows";
-    else if (/Macintosh|Mac OS X/i.test(ua)) os = "mac";
-    else if (/Linux/i.test(ua)) os = "linux";
-    else if (/CrOS/i.test(ua)) os = "chromeOs";
+  // 2. Determine OS
+  let os = "unknown";
+  if (/Android/i.test(ua)) os = "android";
+  else if (/iPhone|iPad|iPod/i.test(ua)) os = "ios";
+  else if (/Harmony|HUAWEI/i.test(ua)) os = "harmony";
+  else if (/Windows NT/i.test(ua)) os = "windows";
+  else if (/Macintosh|Mac OS X/i.test(ua)) os = "mac";
+  else if (/Linux/i.test(ua)) os = "linux";
+  else if (/CrOS/i.test(ua)) os = "chromeOs";
 
-    // 3. Determine Browser (Fixed Safari/Chrome false positive)
-    let browser = "unknown";
-    if (/Edg|Edge/i.test(ua)) browser = "edge";
-    else if (/Firefox/i.test(ua)) browser = "firefox";
-    else if (/Chrome/i.test(ua)) browser = "chrome";
-    else if (/Safari/i.test(ua)) browser = "safari"; 
+  // 3. Determine Browser
+  let browser = "unknown";
+  if (/Edg|Edge/i.test(ua)) browser = "edge";
+  else if (/Firefox/i.test(ua)) browser = "firefox";
+  else if (/Chrome/i.test(ua)) browser = "chrome";
+  else if (/Safari/i.test(ua)) browser = "safari"; 
 
-    // 4. Determine Device Type (Simplified and reliable)
-    let type = "unknown";
-    if (/Mobile|iPhone|Android/i.test(ua) && screenWidth < 601) type = "mobile";
-    else if (/Tablet|iPad|Android/i.test(ua) || (screenWidth >= 601 && screenWidth < 993)) type = "tablet";
-    else if (screenWidth >= 993) type = "desktop";
+  // 4. Determine Device Type
+  let type = "unknown";
+  if (/Mobile|iPhone|Android/i.test(ua) && screenWidth < 601) type = "mobile";
+  else if (/Tablet|iPad|Android/i.test(ua) || (screenWidth >= 601 && screenWidth < 993)) type = "tablet";
+  else if (screenWidth >= 993) type = "desktop";
 
-    // Return everything as a single reactive object
-    return { display, type, os, browser };
-  },
-  
- 
-shareSupport(){
-   if (navigator.share) {return true } else {return false}
+  // 5. Determine Language
+  const language = (navigator.language || "en").split("-")[0];
+
+  // 6. Determine Native Share Support
+  const share = !!navigator.share;
+
+  // Return everything as a single reactive object
+  return { display, type, os, browser, language, share };
 },
+
+  
+
   
   
 },
@@ -218,9 +222,7 @@ shareSupport(){
 methods: {
 
     
-async share(name, text) {
-         await navigator.share({ title: name, url: text }) 
-},
+async share(name, text) { await navigator.share({ title: name, url: text }) },
 
 
 
@@ -232,13 +234,10 @@ async share(name, text) {
 
 
 created() {
+this.$store.device = this.device;
+
 this.$store.tours = this.tours;
 this.$store.tags = [...new Set(this.tours.flatMap(tour => tour.tags || []))];
-
-this.$store.device.type = this.device.type;
-this.$store.device.display = this.device.display ;
-this.$store.device.os = this.device.os;
-this.$store.device.browser = this.device.browser;
 
 },
 
@@ -269,7 +268,7 @@ template: `
       <button class="border round  transparent"> <i>more_vert</i></button>
       <menu class="left no-wrap">
       
-        <li v-if="device.type !== 'mobile' && shareSupport" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></li>
+        <li v-if="device.type !== 'mobile' && $store.device.share" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
       </menu>
     </div>
@@ -321,7 +320,7 @@ template: `
 <RouterLink activeClass="active" to="/en/tours"><i>home</i><span>Home</span></RouterLink>
 <a data-ui="#menu_left"><i>sailing</i><span>Tours</span></a>
 <RouterLink activeClass="active" to="/en/contact"><i>call</i><span>Contact</span></RouterLink>
-<a v-if="shareSupport" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></a>
+<a v-if="$store.device.share" @click="share('Travco Excursions', $route.fullPath)"><i>share</i><span>share</span></a>
 </nav>
 
 
