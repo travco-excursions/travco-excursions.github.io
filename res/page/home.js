@@ -5,23 +5,8 @@ data() { return {
   deferredPrompt: null,
   canInstall: false
  }},
-  
-mounted() {
-    // 1. Check if the app is already running as an installed standalone PWA
-    if (this.isAlreadyInstalled()) { this.canInstall = false; return; }
-    
-    // 2. Listen for the browser installation readiness
-    window.addEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    
-    // 3. Listen for the exact moment the user finishes installing the app
-    window.addEventListener('appinstalled', this.handleAppInstalled);
-  },
-  
-beforeUnmount() {
-    window.removeEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
-    window.removeEventListener('appinstalled', this.handleAppInstalled);
-  },
-  
+
+
  methods: {
     // Helper method to detect if the user is currently browsing inside the PWA
     isAlreadyInstalled() {
@@ -54,12 +39,33 @@ beforeUnmount() {
   },
 
   
+mounted() {
+  
+  if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js') }) };
+
+
+    // 1. Check if the app is already running as an installed standalone PWA
+    if (this.isAlreadyInstalled()) { this.canInstall = false; return; }
+    
+    // 2. Listen for the browser installation readiness
+    window.addEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
+    
+    // 3. Listen for the exact moment the user finishes installing the app
+    window.addEventListener('appinstalled', this.handleAppInstalled);
+  },
+  
+beforeUnmount() {
+    window.removeEventListener('beforeinstallprompt', this.handleBeforeInstallPrompt);
+    window.removeEventListener('appinstalled', this.handleAppInstalled);
+  },
+  
+
   
 
 template: `
 
 
-{{canInstall}}
+
 
 <button  v-if="canInstall"  @click="installPWA" class=""> Install App </button>
 
