@@ -1,6 +1,7 @@
-const { createApp, reactive, computed, defineAsyncComponent } = Vue
-const { createRouter, createWebHistory, createWebHashHistory } = VueRouter
-const { createStore, createLogger, mapState } = Vuex
+const { createApp, createSSRApp, defineComponent, defineAsyncComponent, defineCustomElement, provide, inject, h, createVNode, cloneVNode, mergeProps, toRaw, markRaw, nextTick, version: vueVersion } = Vue
+const { createRouter, createWebHistory, createWebHashHistory, createMemoryHistory, NavigationFailureType, isNavigationFailure, START_LOCATION, parseQuery, stringifyQuery, version: routerVersion } = VueRouter
+const { createStore, createLogger, mapState, mapGetters, mapMutations, mapActions, createNamespacedHelpers, version: vuexVersion } = Vuex
+
 
 
 
