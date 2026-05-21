@@ -102,40 +102,96 @@ createApp().use(router).use(store).mount('#app')
 
 
 
+if('serviceWorker'in navigator){
 
+  window.addEventListener('load',async()=>{
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swUrl = '/sw.js?v=' + Date.now();
+    let refreshing=false;
 
-    // FLAG: Prevents the controllerchange event from being fired multiple times in a row
-    let refreshing = false;
+    try{
 
-    navigator.serviceWorker.register(swUrl)
-      .then(registration => {
-        console.log('SW registered:', registration.scope);
+      const registration=
+        await navigator.serviceWorker.register(
+          '/sw.js',
+          {updateViaCache:'none'}
+        );
 
-        // Check for a modified sw.js on the server every 60 seconds
-        setInterval(() => { registration.update();  }, 1000 * 60);
+      console.log(
+        'SW registered:',
+        registration.scope
+      );
 
-        // GUARD: Only trigger update if there is already an active service worker running
-        if (registration.waiting && navigator.serviceWorker.controller) { registration.waiting.postMessage({ type: 'SKIP_WAITING' }); }
+      // CHECK FOR NEW VERSION
+      setInterval(()=>{
+        registration.update();
+      },1000*60);
 
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            // GUARD: Only force update if the app is already controlled by an older worker
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {  newWorker.postMessage({ type: 'SKIP_WAITING' });  }
-          });
+      // ACTIVATE WAITING WORKER
+      if(
+        registration.waiting &&
+        navigator.serviceWorker.controller
+      ){
+
+        registration.waiting.postMessage({
+          type:'SKIP_WAITING'
         });
-      })
-      .catch(error => console.error('SW registration failed:', error));
 
-    // Listen for the active worker swap
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      // GUARD: Only reload if the script has not already triggered a reload on this load cycle
-      if (!refreshing) { refreshing = true;  window.location.reload();
-   }
-    });
+      }
+
+      // DETECT UPDATE
+      registration.addEventListener(
+        'updatefound',
+        ()=>{
+
+          const newWorker=
+            registration.installing;
+
+          if(!newWorker)return;
+
+          newWorker.addEventListener(
+            'statechange',
+            ()=>{
+
+              if(
+                newWorker.state==='installed' &&
+                navigator.serviceWorker.controller
+              ){
+
+                newWorker.postMessage({
+                  type:'SKIP_WAITING'
+                });
+
+              }
+
+            }
+          );
+
+        }
+      );
+
+    }catch(err){
+
+      console.error(
+        'SW registration failed:',
+        err
+      );
+
+    }
+
+    // RELOAD AFTER UPDATE
+    navigator.serviceWorker.addEventListener(
+      'controllerchange',
+      ()=>{
+
+        if(refreshing)return;
+
+        refreshing=true;
+
+        window.location.reload();
+
+      }
+    );
+
   });
+
 }
