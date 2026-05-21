@@ -34,12 +34,12 @@ Notes:  ${this.booking.note}`)
 },
 
 
-whatsapp() { 
+whatsappSend() { 
   if (this.device.type === 'mobile') { return "whatsapp://send?phone=" + this.whatsapp + "&text=" + this.message}
   else { return "https://wa.me/?phone=" + this.whatsapp + "&text=" + this.message}
 },
 
-mail() { return "mailto:" + this.mail + "?subject=website%20booking&body=" + this.message},
+mailSend() { return "mailto:" + this.mail + "?subject=website%20booking&body=" + this.message},
 
 }, //computed
 
@@ -48,8 +48,8 @@ methods: {
 
 
 send(){
-if (this.booking.method === 'whatsapp') { window.open(this.whatsapp)}
-else { window.open(this.mail)}
+if (this.booking.method === 'whatsapp') { window.open(this.whatsappSend)}
+else { window.open(this.mailSend)}
 },
 
 },//methods
@@ -293,12 +293,11 @@ template: `
 
 
 
-
 <div v-if="tours.filter(t => t.id !== tour.id && t.tags.some(tag => tour.tags.includes(tag))).length">
 
 <div class="large-space"></div>
 
-<h3 class="small">Related Tours</h3>
+<h3 class="small">Related Tours:</h3>
 <div class="grid">
 
 <article class="s6 m4 l3 no-padding no-round small-width no-elevate" v-for="t in tours.filter(tourItem => tourItem.id !== tour.id && tourItem.tags?.some(tag => tour.tags?.includes(tag) ))" :key="t.id">
