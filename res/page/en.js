@@ -178,7 +178,7 @@ methods: {
 
     
 async share() {
-  try { await navigator.share({title: this.title ,  url: window.location.href }) } 
+  try { await navigator.share({title: this.title,  url: window.location.href }) } 
   catch (error) { console.log("Share window dismissed:", error.message)}
 },
 
@@ -196,12 +196,10 @@ this.$store.state.tags = [...new Set(this.tours.flatMap(tour => tour.tags || [])
 
 
 
+
 mounted() {
-
-
+  this.$store.commit('SET_DEVICE');
 },
-
-
 
 
 

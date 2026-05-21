@@ -34,17 +34,18 @@ routes: [
 
 
 const store = createStore({
+  
 state() {return {
   device: {}, 
   title: "Travco Excursions",
-  number: +201550579981,
-  whatsapp: +201550579981,
+  number: "+201550579981",
+  whatsapp: "+201550579981",
   mail: "ibrahimyounan1997@gmail.com",
   pics: "/res/pics/",
   tours: [], 
-  favorite: [],
   tags: [],
-  team: []
+  favorite: [],
+  team: [],
 }},
   
   
@@ -81,6 +82,7 @@ SET_DEVICE(state) {
       
       const language = (navigator.language || "en").split("-")[0];
       const share = !!navigator.share;
+      
       
       // Directly update the state object
       state.device = { display, type, os, browser, language, share };
