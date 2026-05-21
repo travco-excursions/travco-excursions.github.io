@@ -104,46 +104,37 @@ createApp().use(router).use(store).mount('#app')
 
 
 
-
-// Register service worker after the app safely mounts and loads
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // Generates a unique timestamp on every load to bypass GitHub Pages cache
     const swUrl = '/sw.js?v=' + Date.now();
+
+    // FLAG: Prevents the controllerchange event from being fired multiple times in a row
+    let refreshing = false;
 
     navigator.serviceWorker.register(swUrl)
       .then(registration => {
         console.log('SW registered:', registration.scope);
 
-        // 1. Force check the GitHub server for a modified sw.js every 60 seconds
-        setInterval(() => {
-          registration.update();
-        }, 1000 * 60);
+        // Check for a modified sw.js on the server every 60 seconds
+        setInterval(() => { registration.update();  }, 1000 * 60);
 
-        // 2. If an updated worker is already waiting in the background on load
-        if (registration.waiting) {
-          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
+        // GUARD: Only trigger update if there is already an active service worker running
+        if (registration.waiting && navigator.serviceWorker.controller) { registration.waiting.postMessage({ type: 'SKIP_WAITING' }); }
 
-        // 3. If an updated worker is found during runtime or via the interval check
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
           newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-            }
+            // GUARD: Only force update if the app is already controlled by an older worker
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {  newWorker.postMessage({ type: 'SKIP_WAITING' });  }
           });
         });
       })
       .catch(error => console.error('SW registration failed:', error));
 
-    // 4. Reload the page seamlessly the instant the new worker takes control
-    let refreshing = false;
+    // Listen for the active worker swap
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!refreshing) {
-        refreshing = true;
-        window.location.reload();
-      }
+      // GUARD: Only reload if the script has not already triggered a reload on this load cycle
+      if (!refreshing) { refreshing = true;  window.location.reload();  }
     });
   });
 }
