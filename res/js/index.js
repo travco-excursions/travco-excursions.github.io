@@ -12,8 +12,8 @@ const router = createRouter({
 history: createWebHashHistory(), 
 scrollBehavior(to, from) { return {top: 0}  },
 routes: [
-{ path: '/', component: () => import('../page/home.js') },
-
+//{path: '/', redirect: '/en'},
+{path: '/', component: () => import('../page/home.js')},
 
   {path: '/en', component: () => import('../page/en.js'), redirect: '/en/tours' ,children: [
     {path: 'tours', component: () => import('../page/en/tours.js')},

@@ -2,7 +2,10 @@
 export default {
 
 data() {return {
-  booking: { name: "", hotel: "", room: "", date: "", adult: 1, child: 0, infant: 0, note: "" ,method: "whatsapp"},
+  booking: { name: "", hotel: "", room: "", checkout: "", date: "", adult: 1, child: 0, infant: 0, note: "" ,method: "whatsapp"},
+
+  picIndex: 0,
+  
 }},
 
 
@@ -15,6 +18,22 @@ computed: {
 
 tour() { return this.tours.filter(T => T.id === this.$route.params.id)[0] },
 
+minDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`; // Outputs: YYYY-MM-DD
+},
+
+
+maxDate() {
+  const futureDate = new Date(); futureDate.setDate(futureDate.getDate() + 30);
+  const year = futureDate.getFullYear();
+  const month = String(futureDate.getMonth() + 1).padStart(2, '0');
+  const day = String(futureDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+},
 
 message() { return encodeURI( `Website Booking:
 
@@ -24,7 +43,9 @@ Name:  ${this.booking.name}
 
 Hotel:  ${this.booking.hotel}
 Room:  ${this.booking.room}
-Checkout:  ${this.booking.date}
+
+Excursion date:  ${this.booking.date}
+Checkout date:  ${this.booking.checkout}
 
 Adults:  ${this.booking.adult}
 kids:  ${this.booking.child} 
@@ -66,16 +87,35 @@ mounted() {
 
 },
 
-
 template: `
 
+<div v-if="device.display === 'small'">
+<div class="tp-round padding border no-padding  medium-height no-round">
+  <img class="responsive no-round" :src="pics +'tours/'+ tour.imgs[picIndex]" loading="lazy">
+  
+  <div class="absolute middle left large-padding white-text">    
+    <button :disabled="picIndex === 0" class="primary left-round large" @click="picIndex--"><i class="extra">arrow_back</i></button>
+  </div>
 
-<div>
+  <div class="absolute middle right large-padding white-text ">    
+    <button :disabled="picIndex === tour.imgs.length -1" class="primary right-round large" @click="picIndex++"><i class="extra">arrow_forward</i></button> 
+    </div>
 
-<img class="responsive top-round" :src="pics +'tours/'+ tour.imgs[0]" loading="lazy"/>
-<button class="absolute bottom left no-round" data-ui="#gallary"><i>photo_library</i> View all photos</button>
+  <div class="absolute bottom center"> 
+     <i v-for="(x, i) in tour.imgs.length" :class="picIndex === i ? 'tiny fill primary-text ' : 'tiny fill secondary-text'">circle</i>
+  </div>
 
 </div>
+<button class="absolute top left no-round" data-ui="#gallary"><i>photo_library</i> View all photos</button>
+</div>
+
+
+
+<div v-else>
+<img class="responsive top-round" :src="pics +'tours/'+ tour.imgs[0]" loading="lazy"/>
+<button class="absolute bottom left no-round" data-ui="#gallary"><i>photo_library</i> View all photos</button>
+</div>
+
 
 
 
@@ -95,7 +135,7 @@ template: `
 
   <header class="row padding fixed">
    <div class="max"><h5>Gallary</h5></div>
-    <button class="border" data-ui="#gallary"><i>close</i></button>
+    <button class="border" data-ui="#gallary"><i>close</i><b>Close</b></button>
   </header>
  <div>
 
@@ -203,7 +243,7 @@ template: `
 <dialog :class="device.display !== 'large' ? 'max' : ''" id="booking">
   <header class="row padding fixed">
    <div class="max"><h5>Booking</h5></div>
-    <button class="border" data-ui="#booking"><i>close</i></button>
+    <button class="border" data-ui="#booking"><i>close</i><b>Close</b></button>
   </header>
  
 
@@ -220,44 +260,51 @@ template: `
 <div class="field label prefix border">
   <i>edit</i>
   	<input required v-model="booking.name" type="text">
-  <label>Name</label>
+  <label>Name <b class="error-text">*</b></label>
 </div>
 
 <div class="field label prefix border">
   <i>hotel</i>
   	<input required v-model="booking.hotel" type="text">
-  <label>Hotel</label>
+  <label>Hotel <b class="error-text">*</b></label>
 </div>
 
 
 <div class="field label prefix border">
   <i>hotel</i>
-  	<input required v-model="booking.room" type="number">
-  <label>Room Number</label>
+  	<input required v-model="booking.room" type="number" min="99" max="9999999">
+  <label>Room Number <b class="error-text">*</b></label>
+</div>
+
+
+<div class="field label prefix border">
+  <i>today</i>
+  <input required type="date" v-model="booking.date" :min="minDate" :max="maxDate">
+  <label>Excursion  Date <b class="error-text">*</b></label>
 </div>
 
 <div class="field label prefix border">
   <i>today</i>
-  <input type="date" v-model="booking.date">
+  <input type="date" v-model="booking.checkout" :min="minDate" :max="maxDate">
   <label>Checkout Date</label>
 </div>
 
 
 <div class="field label prefix border">
   <i>person</i>
-  	<input required v-model="booking.adult" type="number">
-  <label>Adults</label>
+  	<input required v-model="booking.adult" type="number" min="1" max="99">
+  <label>Adults <b class="error-text">*</b></label>
 </div>
 
 <div class="field label prefix border">
   <i>boy</i>
-  	<input v-model="booking.child" type="number">
+  	<input v-model="booking.child" type="number" min="0" max="99">
   <label>Children</label>
 </div>
 
 <div class="field label prefix border">
   <i>breastfeeding</i>
-  	<input v-model="booking.infant" type="number">
+  	<input v-model="booking.infant" type="number" min="0" max="9">
   <label>Infants</label>
 </div>
 
@@ -278,6 +325,8 @@ template: `
 <button class="border no-round black-text" type="reset" value="reset"><i>close</i> clear</button> 
 </nav>
 
+
+<p class="primary-text"><b>*</b> please hit send again within the <span v-text="booking.method"></span> app</p>
 
 </form>
 
