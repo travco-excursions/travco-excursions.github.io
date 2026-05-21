@@ -183,6 +183,34 @@ async share() {
 },
 
 
+reload() {
+  // 1. Unregister all service workers
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    });
+  }
+
+  // 2. Clear all named Cache Storage
+  if ('caches' in window) {
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((name) => caches.delete(name))
+      );
+    }).then(() => {
+      // 3. Hard reload the page from the server once caches are cleared
+      window.location.reload();
+    });
+  } else {
+    // Fallback reload if Cache API is missing
+    window.location.reload();
+  }
+},
+
+
+
 
 }, //methods
 
@@ -220,6 +248,8 @@ template: `
       
         <li v-if="device.type !== 'mobile' && device.share" @click="share()"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
+        <li  @click="reload()"><i>autorenew</i><span>reload</span></li>
+
       </menu>
     </div>
 

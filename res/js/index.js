@@ -101,13 +101,49 @@ SET_DEVICE(state) {
 createApp().use(router).use(store).mount('#app')
 
 
+
+
+
+
 // Register service worker after the app safely mounts and loads
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(registration => console.log('SW registered:', registration.scope))
+    // Generates a unique timestamp on every load to bypass GitHub Pages cache
+    const swUrl = '/sw.js?v=' + Date.now();
+
+    navigator.serviceWorker.register(swUrl)
+      .then(registration => {
+        console.log('SW registered:', registration.scope);
+
+        // 1. Force check the GitHub server for a modified sw.js every 60 seconds
+        setInterval(() => {
+          registration.update();
+        }, 1000 * 60);
+
+        // 2. If an updated worker is already waiting in the background on load
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+
+        // 3. If an updated worker is found during runtime or via the interval check
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      })
       .catch(error => console.error('SW registration failed:', error));
+
+    // 4. Reload the page seamlessly the instant the new worker takes control
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
   });
 }
-
-
