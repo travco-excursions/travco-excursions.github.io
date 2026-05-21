@@ -102,9 +102,4 @@ createApp().use(router).use(store).mount('#app')
 
 
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try { const r = await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });  console.log('SW:', r.scope); setInterval(() => r.update(), 6e4); } 
-    catch (e) { console.error('SW error:', e); }
-  });
-}
+if (typeof navigator.serviceWorker !== 'undefined') { navigator.serviceWorker.register('sw.js') }
