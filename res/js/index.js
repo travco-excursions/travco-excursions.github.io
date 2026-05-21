@@ -134,7 +134,8 @@ if ('serviceWorker' in navigator) {
     // Listen for the active worker swap
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       // GUARD: Only reload if the script has not already triggered a reload on this load cycle
-      if (!refreshing) { refreshing = true;  window.location.reload();  }
+      if (!refreshing) { refreshing = true;  window.location.reload();
+   }
     });
   });
 }

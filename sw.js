@@ -5,9 +5,8 @@ const ASSETS_TO_CACHE = [
   '/index.html',
   '/res/js/index.js',
   '/res/css/index.css',
-  
   '/manifest.json',
-
+  
   '/res/libs/vue/vue.global.prod.js',
   '/res/libs/vue/vue-router.global.prod.js',
   '/res/libs/vue/vuex.global.prod.js',
@@ -20,7 +19,7 @@ const ASSETS_TO_CACHE = [
   '/res/libs/beercss/material-symbols-subset.woff2'
 ];
 
-// Install event - handles caching your specified files
+// Install event - caches specified files
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -29,7 +28,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Cache Cleanup - removes old cache buckets automatically
+// Cache Cleanup - removes old cache versions
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -44,24 +43,23 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Listen for SKIP_WAITING command from app.js
+// Listen for SKIP_WAITING command
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
 
-// --- UPDATED STRATEGY: Network-First ---
-// Forces live network loading when online, falls back to cache when offline
+// Network-First Strategy
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // SAFEGUARD: Only cache standard GET requests from your own origin
         const isGetRequest = event.request.method === 'GET';
-        const isLocalOrigin = event.request.url.startsWith(self.location.origin);
+        // FIX: Supports caching both local paths and external CDN HTTP/HTTPS protocols
+        const isValidProtocol = event.request.url.startsWith('http');
 
-        if (networkResponse && networkResponse.status === 200 && isGetRequest && isLocalOrigin) {
+        if (networkResponse && networkResponse.status === 200 && isGetRequest && isValidProtocol) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
@@ -70,7 +68,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        // OFFLINE FALLBACK: If network fails (no connection), serve from cache
+        // Fallback to cache when offline
         return caches.match(event.request);
       })
   );
