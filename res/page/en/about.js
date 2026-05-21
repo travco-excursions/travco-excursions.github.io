@@ -1,8 +1,19 @@
 export default {
 
+
+computed: {
+    ...mapState(['pics'])
+},
+
+
+
 template: `
+
+
+{{mail}}
+
 <div>
-<img class="responsive" :src="$store.pics + 'travco/travco.png'" alt="" />
+<img class="responsive" :src="pics + 'travco/logo.png'" alt="" />
 </div>
 
     <div>

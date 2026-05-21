@@ -167,53 +167,10 @@ tours: [
 
 }},
 
+
+
 computed: {
-  
-device() {
-  const ua = navigator.userAgent;
-  const width = window.innerWidth;
-  const screenWidth = window.screen.width;
-
-  // 1. Determine Display Size
-  let display = "medium";
-  if (width < 601) display = "small";
-  else if (width >= 993) display = "large";
-
-  // 2. Determine OS
-  let os = "unknown";
-  if (/Android/i.test(ua)) os = "android";
-  else if (/iPhone|iPad|iPod/i.test(ua)) os = "ios";
-  else if (/Harmony|HUAWEI/i.test(ua)) os = "harmony";
-  else if (/Windows NT/i.test(ua)) os = "windows";
-  else if (/Macintosh|Mac OS X/i.test(ua)) os = "mac";
-  else if (/Linux/i.test(ua)) os = "linux";
-  else if (/CrOS/i.test(ua)) os = "chromeOs";
-
-  // 3. Determine Browser
-  let browser = "unknown";
-  if (/Edg|Edge/i.test(ua)) browser = "edge";
-  else if (/Firefox/i.test(ua)) browser = "firefox";
-  else if (/Chrome/i.test(ua)) browser = "chrome";
-  else if (/Safari/i.test(ua)) browser = "safari"; 
-
-  // 4. Determine Device Type
-  let type = "unknown";
-  if (/Mobile|iPhone|Android/i.test(ua) && screenWidth < 601) type = "mobile";
-  else if (/Tablet|iPad|Android/i.test(ua) || (screenWidth >= 601 && screenWidth < 993)) type = "tablet";
-  else if (screenWidth >= 993) type = "desktop";
-
-  // 5. Determine Language
-  const language = (navigator.language || "en").split("-")[0];
-
-  // 6. Determine Native Share Support
-  const share = !!navigator.share;
-
-  // Return everything as a single reactive object
-  return { display, type, os, browser, language, share };
-},
-
-  
-
+    ...mapState(['title', 'tags', 'pics', 'device'])
 },
 
 
@@ -221,7 +178,7 @@ methods: {
 
     
 async share() {
-  try { await navigator.share({title: "Travco Excursions",  url: window.location.href }) } 
+  try { await navigator.share({title: this.title ,  url: window.location.href }) } 
   catch (error) { console.log("Share window dismissed:", error.message)}
 },
 
@@ -232,10 +189,8 @@ async share() {
 
 
 created() {
-this.$store.device = this.device;
-
-this.$store.tours = this.tours;
-this.$store.tags = [...new Set(this.tours.flatMap(tour => tour.tags || []))];
+this.$store.state.tours = this.tours;
+this.$store.state.tags = [...new Set(this.tours.flatMap(tour => tour.tags || []))];
 
 },
 
@@ -265,7 +220,7 @@ template: `
       <button class="border round  transparent"> <i>more_vert</i></button>
       <menu class="left no-wrap">
       
-        <li v-if="device.type !== 'mobile' && $store.device.share" @click="share()"><i>share</i><span>share</span></li>
+        <li v-if="device.type !== 'mobile' && device.share" @click="share()"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
       </menu>
     </div>
@@ -290,11 +245,11 @@ template: `
 <ul class="list border">
 
 <li><RouterLink activeClass="link" to="/en/tours">
-  <i>tag</i> <div class="max">All</div><b v-text="'('+ $store.tours.length +')'"></b>
+  <i>tag</i> <div class="max">All</div><b v-text="'('+ tours.length +')'"></b>
 </RouterLink></li>  
 
-<li v-for="t in $store.tags"><RouterLink activeClass="link" :to="'/en/tag/' + t">
-  <i>tag</i> <div class="max" v-text="t"></div><b v-text="'('+ $store.tours.filter(tour => tour.tags.some(tag => tag === t)).length +')'"></b>
+<li v-for="t in tags"><RouterLink activeClass="link" :to="'/en/tag/' + t">
+  <i>tag</i> <div class="max" v-text="t"></div><b v-text="'('+ tours.filter(tour => tour.tags.some(tag => tag === t)).length +')'"></b>
 </RouterLink></li>  
 </ul>
 </dialog>
@@ -304,11 +259,11 @@ template: `
 <nav v-show="device.display === 'large'" class="scroll left max elevate">
 
 <RouterLink activeClass="active" to="/en/tours">
-<i>tag</i><span class="max">All</span> <b v-text="'('+ $store.tours.length +')'"></b>
+<i>tag</i><span class="max">All</span> <b v-text="'('+ tours.length +')'"></b>
 </RouterLink>
 
-<RouterLink v-for="t in $store.tags" activeClass="active"  :to="'/en/tag/' + t">
-<i>label</i> <span class="max" v-text="t"></span> <b v-text="'('+ $store.tours.filter(tour => tour.tags.some(tag => tag === t)).length +')'"></b>
+<RouterLink v-for="t in tags" activeClass="active"  :to="'/en/tag/' + t">
+<i>label</i> <span class="max" v-text="t"></span> <b v-text="'('+ tours.filter(tour => tour.tags.some(tag => tag === t)).length +')'"></b>
 </RouterLink>
 </nav>
 
@@ -317,7 +272,7 @@ template: `
 <RouterLink activeClass="active" to="/en/tours"><i>home</i><span>Home</span></RouterLink>
 <a data-ui="#menu_left"><i>sailing</i><span>Tours</span></a>
 <RouterLink activeClass="active" to="/en/contact"><i>call</i><span>Contact</span></RouterLink>
-<a v-if="$store.device.share" @click="share()"><i>share</i><span>share</span></a>
+<a v-if="device.share" @click="share()"><i>share</i><span>share</span></a>
 
 
 

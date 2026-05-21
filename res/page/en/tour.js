@@ -10,7 +10,10 @@ data() {return {
 
 computed: {
 
-tour() { return this.$store.tours.filter(T => T.id === this.$route.params.id)[0] },
+...mapState(['title', 'tours', 'tags', 'pics', 'whatsapp', 'mail', 'device']),
+
+
+tour() { return this.tours.filter(T => T.id === this.$route.params.id)[0] },
 
 
 message() { return encodeURI( `Website Booking:
@@ -32,11 +35,11 @@ Notes:  ${this.booking.note}`)
 
 
 whatsapp() { 
-  if (this.$store.device.type === 'mobile') { return "whatsapp://send?phone=" + this.$store.WAnumber + "&text=" + this.message}
-  else { return "https://wa.me/?phone=" + this.$store.whatsapp + "&text=" + this.message}
+  if (this.device.type === 'mobile') { return "whatsapp://send?phone=" + this.whatsapp + "&text=" + this.message}
+  else { return "https://wa.me/?phone=" + this.whatsapp + "&text=" + this.message}
 },
 
-mail() { return "mailto:" + this.$store.mail + "?subject=website%20booking&body=" + this.message},
+mail() { return "mailto:" + this.mail + "?subject=website%20booking&body=" + this.message},
 
 }, //computed
 
@@ -69,7 +72,7 @@ template: `
 
 <div>
 
-<img class="responsive top-round" :src="$store.pics +'tours/'+ tour.imgs[0]" loading="lazy"/>
+<img class="responsive top-round" :src="pics +'tours/'+ tour.imgs[0]" loading="lazy"/>
 <button class="absolute bottom left no-round" data-ui="#gallary"><i>photo_library</i> View all photos</button>
 
 </div>
@@ -88,7 +91,7 @@ template: `
 
 
 
-<dialog :class="$store.device.display !== 'large' ? 'max' : ''" id="gallary">
+<dialog :class="device.display !== 'large' ? 'max' : ''" id="gallary">
 
   <header class="row padding fixed">
    <div class="max"><h5>Gallary</h5></div>
@@ -97,7 +100,7 @@ template: `
  <div>
 
 <div class="grid">
-<img class="s12 m6 l12 responsive round" v-for="(i, index) in tour.imgs" :src="$store.pics +'tours/' + i" loading="lazy"/>
+<img class="s12 m6 l12 responsive round" v-for="(i, index) in tour.imgs" :src="pics +'tours/' + i" loading="lazy"/>
 </div>
 </div>
 
@@ -197,7 +200,7 @@ template: `
 
 
 
-<dialog :class="$store.device.display !== 'large' ? 'max' : ''" id="booking">
+<dialog :class="device.display !== 'large' ? 'max' : ''" id="booking">
   <header class="row padding fixed">
    <div class="max"><h5>Booking</h5></div>
     <button class="border" data-ui="#booking"><i>close</i></button>
@@ -205,7 +208,7 @@ template: `
  
 
   <div class="tabs">
-    <a :class="booking.method === 'whatsapp' ? 'active' : ''" @click="booking.method = 'whatsapp'"> <i><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i> <span>Use whatsapp</span></a>
+    <a :class="booking.method === 'whatsapp' ? 'active' : ''" @click="booking.method = 'whatsapp'"> <i><img :src="pics + 'svg/whatsapp.svg'" alt="icon"></i> <span>Use whatsapp</span></a>
     <a :class="booking.method === 'mail' ? 'active' : ''" @click="booking.method = 'mail'"> <i>mail</i> <span>Use Email</span></a>
   </div>
 
@@ -268,7 +271,7 @@ template: `
   
 <nav class="row">
 <button class="border no-round black-text"  type="submit" value="submit">
-<i v-show="booking.method === 'whatsapp'"><img :src="$store.pics + 'svg/whatsapp.svg'" alt="icon"></i>
+<i v-show="booking.method === 'whatsapp'"><img :src="pics + 'svg/whatsapp.svg'" alt="icon"></i>
 <i v-show="booking.method === 'mail'" class="primary-text" >mail</i>
 <span>Send</span>
 </button>
@@ -291,15 +294,15 @@ template: `
 
 
 
-<div v-if="$store.tours.filter(t => t.id !== tour.id && t.tags.some(tag => tour.tags.includes(tag))).length">
+<div v-if="tours.filter(t => t.id !== tour.id && t.tags.some(tag => tour.tags.includes(tag))).length">
 
 <div class="large-space"></div>
 
 <h3 class="small">Related Tours</h3>
 <div class="grid">
 
-<article class="s6 m4 l3 no-padding no-round small-width no-elevate" v-for="t in $store.tours.filter(tourItem => tourItem.id !== tour.id && tourItem.tags?.some(tag => tour.tags?.includes(tag) ))" :key="t.id">
-  <img class="responsive medium" :src="$store.pics +'tours/'+ t.imgs[0]" loading="lazy">
+<article class="s6 m4 l3 no-padding no-round small-width no-elevate" v-for="t in tours.filter(tourItem => tourItem.id !== tour.id && tourItem.tags?.some(tag => tour.tags?.includes(tag) ))" :key="t.id">
+  <img class="responsive medium" :src="pics +'tours/'+ t.imgs[0]" loading="lazy">
   <div class="padding">
     <RouterLink class="link" :to="'/en/tours/' + t.id">
     <h5 class="medium-text" v-text="t.title"></h5>
@@ -320,10 +323,10 @@ template: `
 <h3>Tours tags:</h3>
 <div class="small-padding">
 <nav class="wrap">
-  <RouterLink v-for="t in $store.tags" class="button chip round medium" :to="'/en/tag/' + t">
+  <RouterLink v-for="t in tags" class="button chip round medium" :to="'/en/tag/' + t">
     <i>tag</i>
     <span v-text="t"></span>
-    <span class="badge none" v-text="$store.tours.filter(tour => tour.tags.some(tag => tag === t)).length"></span>
+    <span class="badge none" v-text="tours.filter(tour => tour.tags.some(tag => tag === t)).length"></span>
   </RouterLink>
 </nav>
 </div>

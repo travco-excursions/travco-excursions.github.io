@@ -8,15 +8,35 @@ search:  this.$route.query.q || "",
 
 computed: {
 
+...mapState(['title', 'tours', 'tags', 'pics', 'device']),
 
-filteredTours() { 
-  if (this.$route.query.q) {return this.$store.tours.filter(tour => tour.title.toLowerCase().includes(this.$route.query.q.toLowerCase()) || tour.description.toLowerCase().includes(this.$route.query.q.toLowerCase()) || tour.tags.some(tag => tag.toLowerCase().includes(this.$route.query.q.toLowerCase())) )}
-  else if (this.$route.params.tag) {return this.$store.tours.filter(tour => tour.tags.some(tag => tag === this.$route.params.tag )) } 
-  else {return this.$store.tours} 
+
+filteredTours() {
+  const query = String(this.$route.query?.q || '').toLowerCase().trim();
+  const routeTag = this.$route.params?.tag;
+
+  // 3. Handle query-based filtering
+  if (query) {
+    return this.tours.filter(tour => {
+      const titleMatch = tour?.title?.toLowerCase().includes(query);
+      const descMatch = tour?.description?.toLowerCase().includes(query);
+      const tagMatch = Array.isArray(tour?.tags) && tour.tags.some(tag => 
+        String(tag).toLowerCase().includes(query)
+      );
+      
+      return titleMatch || descMatch || tagMatch;
+    });
+  }
+
+  // 4. Handle tag-based filtering
+  if (routeTag) { return this.tours.filter(tour =>  Array.isArray(tour?.tags) && tour.tags.includes(routeTag)) }
+
+  // 5. Fallback
+  return this.tours;
 },
 
-
 },
+
 
 template: `
 
@@ -38,7 +58,7 @@ template: `
 <div v-show="$route.path !== '/en/search/'" class="small-padding">
 <nav class="scroll">
 <RouterLink to="/en/tours" activeClass="primary medium"  class="button chip">All</RouterLink>
-<RouterLink :to="'/en/tag/' + tag" activeClass="primary medium"  class="button chip"  v-for="tag in $store.tags" :key="tag"><span v-text="tag"></span></RouterLink>
+<RouterLink :to="'/en/tag/' + tag" activeClass="primary medium"  class="button chip"  v-for="tag in tags" :key="tag"><span v-text="tag"></span></RouterLink>
 </nav>
 </div>
 
@@ -49,7 +69,7 @@ template: `
 <div class="grid">
 
 <article class="s12 m6 l4 padding large-elevate" v-for="tour in filteredTours" :key="tour.id">
-  <img class="responsive medium elevate" :src="$store.pics +'tours/'+ tour.imgs[0]" loading="lazy">
+  <img class="responsive medium elevate" :src="pics +'tours/'+ tour.imgs[0]" loading="lazy">
   
   <div class="mediu-padding">
     <h5 class="large-text bold" v-text="tour.title"></h5>
