@@ -183,30 +183,25 @@ async share() {
 },
 
 
-reload() {
+async reload() {
   // 1. Unregister all service workers
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (const registration of registrations) {
-        registration.unregister();
-      }
-    });
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(reg => reg.unregister()));
   }
-
-  // 2. Clear all named Cache Storage
+  
+  // 2. Delete all Cache Storage (SW caches)
   if ('caches' in window) {
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((name) => caches.delete(name))
-      );
-    }).then(() => {
-      // 3. Hard reload the page from the server once caches are cleared
-      window.location.reload();
-    });
-  } else {
-    // Fallback reload if Cache API is missing
-    window.location.reload();
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map(name => caches.delete(name)));
   }
+  
+  // 3. Clear localStorage & sessionStorage
+  localStorage.clear();
+  sessionStorage.clear();
+  
+  // 4. Hard reload (bypass browser cache)
+  window.location.reload(true);
 },
 
 
