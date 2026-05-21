@@ -39,9 +39,9 @@ const store = createStore({
 state() {return {
   device: {}, 
   title: "Travco Excursions",
-  number: "+201550579981",
-  whatsapp: "+201550579981",
-  mail: "ibrahimyounan1997@gmail.com",
+  number: "+201025077704",
+  whatsapp: "+201025077704",
+  mail: "travco@gmail.com",
   pics: "/res/pics/",
   tours: [], 
   tags: [],
