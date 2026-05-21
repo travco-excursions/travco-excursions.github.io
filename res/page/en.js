@@ -243,7 +243,7 @@ template: `
       
         <li v-if="device.type !== 'mobile' && device.share" @click="share()"><i>share</i><span>share</span></li>
         <li><RouterLink to="/en/about"><i>info</i><span>About Us</span></RouterLink></li>
-        <li  @click="reload()"><i>autorenew</i><span>reload</span></li>
+        <li  @click="reload()"><i>autorenew</i><span>update</span></li>
 
       </menu>
     </div>
