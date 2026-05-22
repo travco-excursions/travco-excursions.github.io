@@ -266,7 +266,7 @@ template: `
 
 
 <fieldset class="row">
-  <legend>Hotel</legend>
+  <!-- <legend>Hotel</legend> -->
 
 <div class="field label prefix border max">
   <i>hotel</i>
@@ -285,7 +285,7 @@ template: `
 
 
 <fieldset class="row">
-  <legend>Dates</legend>
+  <!-- <legend>Dates</legend> -->
 
 <div class="field label prefix border max">
   <i>today</i>
@@ -304,7 +304,7 @@ template: `
 
 
 <fieldset class="row">
-  <legend>Count</legend>
+  <!-- <legend>Count</legend> -->
 
 <div class="field label prefix border max">
   <i>person</i>
@@ -337,12 +337,12 @@ template: `
   
   
 <nav class="row">
-<button class="border no-round black-text"  type="submit" value="submit">
+<button class="border no-round black-text large responsive max"  type="submit" value="submit">
 <i v-show="booking.method === 'whatsapp'"><img :src="pics + 'svg/whatsapp.svg'" alt="icon"></i>
 <i v-show="booking.method === 'mail'" class="primary-text" >mail</i>
 <span>Send</span>
 </button>
-<button class="border no-round black-text" type="reset" value="reset"><i>close</i> clear</button> 
+<button class="border no-round black-text large" type="reset" value="reset"><i>backspace</i> Clear</button> 
 </nav>
 
 
