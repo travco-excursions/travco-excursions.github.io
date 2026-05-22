@@ -84,13 +84,16 @@ created() {
 
 mounted() {
 
+if (this.device.type !== 'mobile') {this.booking.method = "mail"};
+  
+
 
 },
 
 template: `
 
 <div v-if="device.display === 'small'">
-<div class="tp-round padding border no-padding  medium-height no-round">
+<div class="tp-round padding border no-padding  no-round">
   <img class="responsive no-round" :src="pics +'tours/'+ tour.imgs[picIndex]" loading="lazy">
   
   <div class="absolute middle left large-padding white-text">    
@@ -252,8 +255,6 @@ template: `
     <a :class="booking.method === 'mail' ? 'active' : ''" @click="booking.method = 'mail'"> <i>mail</i> <span>Use Email</span></a>
   </div>
 
-  
-
 
 <form class="padding" @submit.prevent="send()">
 
@@ -263,50 +264,69 @@ template: `
   <label>Name <b class="error-text">*</b></label>
 </div>
 
-<div class="field label prefix border">
+
+<fieldset class="row">
+  <legend>Hotel</legend>
+
+<div class="field label prefix border max">
   <i>hotel</i>
   	<input required v-model="booking.hotel" type="text">
-  <label>Hotel <b class="error-text">*</b></label>
+  <label>Hotel name <b class="error-text">*</b></label>
 </div>
 
 
 <div class="field label prefix border">
   <i>hotel</i>
   	<input required v-model="booking.room" type="number" min="99" max="9999999">
-  <label>Room Number <b class="error-text">*</b></label>
+  <label>Room <b class="error-text">*</b></label>
 </div>
 
+</fieldset>
 
-<div class="field label prefix border">
+
+<fieldset class="row">
+  <legend>Dates</legend>
+
+<div class="field label prefix border max">
   <i>today</i>
   <input required type="date" v-model="booking.date" :min="minDate" :max="maxDate">
   <label>Excursion  Date <b class="error-text">*</b></label>
 </div>
 
-<div class="field label prefix border">
+<div class="field label prefix border max">
   <i>today</i>
   <input type="date" v-model="booking.checkout" :min="minDate" :max="maxDate">
   <label>Checkout Date</label>
 </div>
 
+</fieldset>
 
-<div class="field label prefix border">
+
+
+<fieldset class="row">
+  <legend>Count</legend>
+
+<div class="field label prefix border max">
   <i>person</i>
   	<input required v-model="booking.adult" type="number" min="1" max="99">
   <label>Adults <b class="error-text">*</b></label>
 </div>
 
-<div class="field label prefix border">
-  <i>boy</i>
+
+<div class="field label prefix border max">
+  <i>escalator_warning</i>
   	<input v-model="booking.child" type="number" min="0" max="99">
-  <label>Children</label>
+  <label>Kids</label>
 </div>
 
-<div class="field label prefix border">
+<div class="field label prefix border max">
   <i>breastfeeding</i>
   	<input v-model="booking.infant" type="number" min="0" max="9">
   <label>Infants</label>
 </div>
+
+</fieldset>
+
 
 
   <div class="field textarea label border">
